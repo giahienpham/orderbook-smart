@@ -16,6 +16,7 @@ FetchContent_MakeAvailable(fmt)
 
 add_library(orderbook_engine STATIC
   src/top_of_book.cpp
+  src/book_side.cpp
 )
 target_include_directories(orderbook_engine PUBLIC include)
 target_link_libraries(orderbook_engine PUBLIC fmt::fmt)
@@ -33,4 +34,8 @@ FetchContent_MakeAvailable(googletest)
 add_executable(engine_smoke_test tests/engine_smoke_test.cpp)
 target_link_libraries(engine_smoke_test PRIVATE orderbook_engine GTest::gtest_main)
 add_test(NAME engine_smoke_test COMMAND engine_smoke_test)
+
+add_executable(book_side_test tests/book_side_test.cpp)
+target_link_libraries(book_side_test PRIVATE orderbook_engine GTest::gtest_main)
+add_test(NAME book_side_test COMMAND book_side_test)
 
