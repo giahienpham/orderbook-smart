@@ -1,7 +1,7 @@
 Orderbook Smart
 ================
 
-This project is a high-performance C++ limit order book and simulator, Python ML pipeline, backtesting with PnL, using Next.js + shadcn for visualization. I
+This project is a high-performance C++ limit order book and simulator, Python ML pipeline, backtesting with PnL, using Next.js + shadcn for visualization. 
 
 
 References

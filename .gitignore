@@ -1,0 +1,33 @@
+# General
+.DS_Store
+*.log
+*.tmp
+
+# Build
+build/
+dist/
+cmake-build*/
+.cache/
+
+# Python
+__pycache__/
+.venv/
+*.egg-info/
+.pytest_cache/
+
+# Node/Next.js
+ui/.next/
+ui/node_modules/
+ui/.turbo/
+ui/out/
+
+# Data
+data/
+*.parquet
+*.feather
+*.csv
+
+# IDE
+.idea/
+.vscode/
+
