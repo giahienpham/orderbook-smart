@@ -26,5 +26,21 @@ std::optional<double> TopOfBook::mid_price() const {
   return (bid_->price + ask_->price) * 0.5;
 }
 
+void TopOfBook::reset() {
+  bid_.reset();
+  ask_.reset();
+}
+
+bool TopOfBook::has_bid() const { return static_cast<bool>(bid_); }
+bool TopOfBook::has_ask() const { return static_cast<bool>(ask_); }
+
+TopOfBookSnapshot TopOfBook::snapshot() const {
+  TopOfBookSnapshot s;
+  s.bid = bid_;
+  s.ask = ask_;
+  s.mid = mid_price();
+  return s;
+}
+
 }  // namespace ob
 
