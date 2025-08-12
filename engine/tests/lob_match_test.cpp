@@ -28,5 +28,11 @@ TEST(LOBMatch, LimitCrossesThenPostsRemainder) {
   // all asks at 101 consumed
   EXPECT_FALSE(lob.best_ask().has_value());
   EXPECT_TRUE(lob.validate());
+
+  auto bb = lob.best_bid();
+  ASSERT_TRUE(bb.has_value());
+  EXPECT_DOUBLE_EQ(*bb, 102.0);
+  auto mp = lob.mid_price();
+  EXPECT_FALSE(mp.has_value()); 
 }
 

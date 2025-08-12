@@ -23,6 +23,27 @@ class LimitOrderBook {
 
   [[nodiscard]] bool validate() const { return bids_.validate() && asks_.validate(); }
 
+  [[nodiscard]] std::optional<double> mid_price() const {
+    auto bb = bids_.best_price();
+    auto ba = asks_.best_price();
+    if (!bb || !ba) return std::nullopt;
+    return (*bb + *ba) * 0.5;
+  }
+  [[nodiscard]] std::optional<double> spread() const {
+    auto bb = bids_.best_price();
+    auto ba = asks_.best_price();
+    if (!bb || !ba) return std::nullopt;
+    return *ba - *bb;
+  }
+
+  struct DepthSnapshot {
+    std::vector<std::pair<double, double>> bids;  
+    std::vector<std::pair<double, double>> asks;  
+  };
+  [[nodiscard]] DepthSnapshot snapshot(std::size_t depth) const {
+    return DepthSnapshot{bids_.top_n(depth), asks_.top_n(depth)};
+  }
+
  private:
   BookSide bids_;
   BookSide asks_;
