@@ -61,3 +61,33 @@ TEST(BookSide, AddRemoveErase) {
   EXPECT_FALSE(asks.best_price().has_value());
 }
 
+TEST(BookSide, BestLevelAndConsume) {
+  ob::BookSide asks{ob::Side::Ask};
+  asks.upsert(100.0, 1.0);
+  asks.upsert(99.5, 2.0);  
+
+  auto bl = asks.best_level();
+  ASSERT_TRUE(bl.has_value());
+  EXPECT_DOUBLE_EQ(bl->price, 99.5);
+  EXPECT_DOUBLE_EQ(bl->size, 2.0);
+
+  auto res = asks.consume_best(1.2);
+  EXPECT_DOUBLE_EQ(res.consumed, 1.2);
+  EXPECT_DOUBLE_EQ(res.notional, 1.2 * 99.5);
+
+  bl = asks.best_level();
+  ASSERT_TRUE(bl.has_value());
+  EXPECT_DOUBLE_EQ(bl->price, 99.5);
+  EXPECT_NEAR(bl->size, 0.8, 1e-12);
+
+  // consume more than remaining at best, I would erase that level
+  res = asks.consume_best(1.0);
+  EXPECT_NEAR(res.consumed, 0.8, 1e-12);
+  EXPECT_NEAR(res.notional, 0.8 * 99.5, 1e-12);
+
+  bl = asks.best_level();
+  ASSERT_TRUE(bl.has_value());
+  EXPECT_DOUBLE_EQ(bl->price, 100.0);
+  EXPECT_DOUBLE_EQ(bl->size, 1.0);
+}
+

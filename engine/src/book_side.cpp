@@ -76,5 +76,40 @@ std::vector<std::pair<double, double>> BookSide::top_n(std::size_t n) const {
   return out;
 }
 
-}  // namespace ob
+std::optional<BookSide::LevelView> BookSide::best_level() const {
+  if (levels_.empty()) return std::nullopt;
+  if (side_ == Side::Ask) {
+    const auto& it = *levels_.begin();
+    return LevelView{it.first, it.second.total_size()};
+  }
+  const auto& it = *levels_.rbegin();
+  return LevelView{it.first, it.second.total_size()};
+}
+
+BookSide::ConsumeBestResult BookSide::consume_best(double qty) {
+  ConsumeBestResult res{0.0, 0.0};
+  if (qty <= 0.0 || levels_.empty()) return res;
+
+  if (side_ == Side::Ask) {
+    auto it = levels_.begin();
+    double available = it->second.total_size();
+    double take = qty < available ? qty : available;
+    it->second.remove_size(take);
+    res.consumed = take;
+    res.notional = take * it->first;
+    if (it->second.empty()) levels_.erase(it);
+    return res;
+  }
+
+  auto it = std::prev(levels_.end());
+  double available = it->second.total_size();
+  double take = qty < available ? qty : available;
+  it->second.remove_size(take);
+  res.consumed = take;
+  res.notional = take * it->first;
+  if (it->second.empty()) levels_.erase(it);
+  return res;
+}
+
+}  
 

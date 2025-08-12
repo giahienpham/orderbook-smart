@@ -27,8 +27,20 @@ class BookSide {
   [[nodiscard]] std::optional<double> best_price() const;
   [[nodiscard]] double total_size() const;
 
-  // Return up to n best [price, size] pairs in book order.
   [[nodiscard]] std::vector<std::pair<double, double>> top_n(std::size_t n) const;
+
+  struct LevelView {
+    double price;
+    double size;
+  };
+  [[nodiscard]] std::optional<LevelView> best_level() const;
+
+  struct ConsumeBestResult {
+    double consumed;
+    double notional;  // consumed * price at that level
+  };
+  // Returns how much was consumed (<= qty) and notional = consumed * price.
+  ConsumeBestResult consume_best(double qty);
 
  private:
   Side side_ {Side::Bid};
