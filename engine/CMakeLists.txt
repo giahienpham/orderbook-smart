@@ -17,6 +17,7 @@ FetchContent_MakeAvailable(fmt)
 add_library(orderbook_engine STATIC
   src/top_of_book.cpp
   src/book_side.cpp
+  src/limit_order_book.cpp
 )
 target_include_directories(orderbook_engine PUBLIC include)
 target_link_libraries(orderbook_engine PUBLIC fmt::fmt)
@@ -38,4 +39,8 @@ add_test(NAME engine_smoke_test COMMAND engine_smoke_test)
 add_executable(book_side_test tests/book_side_test.cpp)
 target_link_libraries(book_side_test PRIVATE orderbook_engine GTest::gtest_main)
 add_test(NAME book_side_test COMMAND book_side_test)
+
+add_executable(lob_match_test tests/lob_match_test.cpp)
+target_link_libraries(lob_match_test PRIVATE orderbook_engine GTest::gtest_main)
+add_test(NAME lob_match_test COMMAND lob_match_test)
 
