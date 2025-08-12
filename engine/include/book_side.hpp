@@ -38,11 +38,11 @@ class BookSide {
   struct ConsumeBestResult {
     double consumed;
     double notional;  // consumed * price at that level
+    double price;    
   };
   // Returns how much was consumed (<= qty) and notional = consumed * price.
   ConsumeBestResult consume_best(double qty);
 
-  // Invariants: no non-positive sizes; ordering guaranteed by std::map.
   [[nodiscard]] bool validate() const;
 
  private:

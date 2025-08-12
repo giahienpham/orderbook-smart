@@ -87,7 +87,7 @@ std::optional<BookSide::LevelView> BookSide::best_level() const {
 }
 
 BookSide::ConsumeBestResult BookSide::consume_best(double qty) {
-  ConsumeBestResult res{0.0, 0.0};
+  ConsumeBestResult res{0.0, 0.0, 0.0};
   if (qty <= 0.0 || levels_.empty()) return res;
 
   if (side_ == Side::Ask) {
@@ -97,6 +97,7 @@ BookSide::ConsumeBestResult BookSide::consume_best(double qty) {
     it->second.remove_size(take);
     res.consumed = take;
     res.notional = take * it->first;
+    res.price = it->first;
     if (it->second.empty()) levels_.erase(it);
     return res;
   }
@@ -107,6 +108,7 @@ BookSide::ConsumeBestResult BookSide::consume_best(double qty) {
   it->second.remove_size(take);
   res.consumed = take;
   res.notional = take * it->first;
+  res.price = it->first;
   if (it->second.empty()) levels_.erase(it);
   return res;
 }

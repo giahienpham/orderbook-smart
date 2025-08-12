@@ -13,6 +13,9 @@ class LimitOrderBook {
   OrderResult execute_market(Side side, double size);
   OrderResult execute_limit(Side side, double price, double size);
 
+  // Convenience: sweep across multiple levels up to max_steps to avoid infinite loops.
+  OrderResult execute_market_steps(Side side, double size, std::size_t max_steps);
+
   void cancel(Side side, double price, double size);
 
   [[nodiscard]] std::optional<double> best_bid() const { return bids_.best_price(); }
