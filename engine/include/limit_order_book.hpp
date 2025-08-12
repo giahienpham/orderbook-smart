@@ -21,6 +21,8 @@ class LimitOrderBook {
   [[nodiscard]] const BookSide& bids() const { return bids_; }
   [[nodiscard]] const BookSide& asks() const { return asks_; }
 
+  [[nodiscard]] bool validate() const { return bids_.validate() && asks_.validate(); }
+
  private:
   BookSide bids_;
   BookSide asks_;

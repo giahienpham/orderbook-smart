@@ -42,6 +42,9 @@ class BookSide {
   // Returns how much was consumed (<= qty) and notional = consumed * price.
   ConsumeBestResult consume_best(double qty);
 
+  // Invariants: no non-positive sizes; ordering guaranteed by std::map.
+  [[nodiscard]] bool validate() const;
+
  private:
   Side side_ {Side::Bid};
   std::map<double, PriceLevel> levels_;

@@ -16,6 +16,7 @@ TEST(LOBMatch, MarketConsumesOppositeBest) {
   // consume 1.0@100, then 0.2@101 → 100 erased, best ask is now 101.
   ASSERT_TRUE(lob.best_ask().has_value());
   EXPECT_DOUBLE_EQ(lob.best_ask().value(), 101.0);
+  EXPECT_TRUE(lob.validate());
 }
 
 TEST(LOBMatch, LimitCrossesThenPostsRemainder) {
@@ -26,5 +27,6 @@ TEST(LOBMatch, LimitCrossesThenPostsRemainder) {
   EXPECT_DOUBLE_EQ(res.total_filled, 2.0);
   // all asks at 101 consumed
   EXPECT_FALSE(lob.best_ask().has_value());
+  EXPECT_TRUE(lob.validate());
 }
 

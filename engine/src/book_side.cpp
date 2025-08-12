@@ -111,5 +111,13 @@ BookSide::ConsumeBestResult BookSide::consume_best(double qty) {
   return res;
 }
 
+bool BookSide::validate() const {
+  for (const auto& [price, lvl] : levels_) {
+    (void)price;
+    if (lvl.total_size() <= 0.0) return false;
+  }
+  return true;
+}
+
 }  
 
