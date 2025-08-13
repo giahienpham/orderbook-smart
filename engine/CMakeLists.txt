@@ -44,6 +44,12 @@ add_executable(lob_match_test tests/lob_match_test.cpp)
 target_link_libraries(lob_match_test PRIVATE orderbook_engine GTest::gtest_main)
 add_test(NAME lob_match_test COMMAND lob_match_test)
 
+option(ORDERBOOK_SMART_BUILD_BENCH "Build micro-benchmarks" OFF)
+if(ORDERBOOK_SMART_BUILD_BENCH)
+  add_executable(lob_bench bench/bench_micro.cpp)
+  target_link_libraries(lob_bench PRIVATE orderbook_engine)
+endif()
+
 add_executable(lob_steps_cancel_test tests/lob_steps_cancel_test.cpp)
 target_link_libraries(lob_steps_cancel_test PRIVATE orderbook_engine GTest::gtest_main)
 add_test(NAME lob_steps_cancel_test COMMAND lob_steps_cancel_test)
