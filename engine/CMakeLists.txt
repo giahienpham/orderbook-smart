@@ -44,3 +44,7 @@ add_executable(lob_match_test tests/lob_match_test.cpp)
 target_link_libraries(lob_match_test PRIVATE orderbook_engine GTest::gtest_main)
 add_test(NAME lob_match_test COMMAND lob_match_test)
 
+add_executable(lob_steps_cancel_test tests/lob_steps_cancel_test.cpp)
+target_link_libraries(lob_steps_cancel_test PRIVATE orderbook_engine GTest::gtest_main)
+add_test(NAME lob_steps_cancel_test COMMAND lob_steps_cancel_test)
+

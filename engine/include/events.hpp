@@ -1,6 +1,7 @@
 #pragma once
 
-#include "book_side.hpp"  // for Side
+#include <vector>
+#include "book_side.hpp"  
 
 namespace ob {
 
@@ -21,6 +22,7 @@ struct Fill {
 struct OrderResult {
   double total_filled {0.0};
   double notional {0.0};
+  std::vector<Fill> fills;
 };
 
 }  

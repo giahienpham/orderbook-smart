@@ -12,8 +12,11 @@ OrderResult LimitOrderBook::execute_market(Side side, double size) {
     auto take_res = (side == Side::Bid)
                         ? asks_.consume_best(to_take)
                         : bids_.consume_best(to_take);
-    res.total_filled += take_res.consumed;
-    res.notional += take_res.notional;
+    if (take_res.consumed > 0.0) {
+      res.total_filled += take_res.consumed;
+      res.notional += take_res.notional;
+      res.fills.push_back(Fill{take_res.price, take_res.consumed});
+    }
     remaining -= take_res.consumed;
     if (take_res.consumed <= 0.0) break;
   }
@@ -31,8 +34,11 @@ OrderResult LimitOrderBook::execute_market_steps(Side side, double size, std::si
     auto take_res = (side == Side::Bid)
                         ? asks_.consume_best(to_take)
                         : bids_.consume_best(to_take);
-    res.total_filled += take_res.consumed;
-    res.notional += take_res.notional;
+    if (take_res.consumed > 0.0) {
+      res.total_filled += take_res.consumed;
+      res.notional += take_res.notional;
+      res.fills.push_back(Fill{take_res.price, take_res.consumed});
+    }
     remaining -= take_res.consumed;
     if (take_res.consumed <= 0.0) break;
     ++steps;
@@ -54,8 +60,11 @@ OrderResult LimitOrderBook::execute_limit(Side side, double price, double size) 
     auto take_res = (side == Side::Bid)
                         ? asks_.consume_best(to_take)
                         : bids_.consume_best(to_take);
-    res.total_filled += take_res.consumed;
-    res.notional += take_res.notional;
+    if (take_res.consumed > 0.0) {
+      res.total_filled += take_res.consumed;
+      res.notional += take_res.notional;
+      res.fills.push_back(Fill{take_res.price, take_res.consumed});
+    }
     remaining -= take_res.consumed;
     if (take_res.consumed <= 0.0) break;
   }

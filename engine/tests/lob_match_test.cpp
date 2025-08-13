@@ -13,6 +13,12 @@ TEST(LOBMatch, MarketConsumesOppositeBest) {
 
   auto res = lob.execute_market(Side::Bid, 1.2); 
   EXPECT_DOUBLE_EQ(res.total_filled, 1.2);
+  ASSERT_FALSE(res.fills.empty());
+  // First fill should be at 100.0 for 1.0, second at 101.0 for 0.2
+  EXPECT_NEAR(res.fills[0].price, 100.0, 1e-12);
+  EXPECT_NEAR(res.fills[0].size, 1.0, 1e-12);
+  EXPECT_NEAR(res.fills[1].price, 101.0, 1e-12);
+  EXPECT_NEAR(res.fills[1].size, 0.2, 1e-12);
   // consume 1.0@100, then 0.2@101 → 100 erased, best ask is now 101.
   ASSERT_TRUE(lob.best_ask().has_value());
   EXPECT_DOUBLE_EQ(lob.best_ask().value(), 101.0);
