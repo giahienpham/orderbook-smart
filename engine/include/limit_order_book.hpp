@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+#include <deque>
 #include "book_side.hpp"
 #include "events.hpp"
 
@@ -47,9 +49,16 @@ class LimitOrderBook {
     return DepthSnapshot{bids_.top_n(depth), asks_.top_n(depth)};
   }
 
+  // Recent fills ring buffer (lite trade log)
+  void set_recent_fills_capacity(std::size_t cap);
+  std::vector<Fill> get_and_clear_recent_fills();
+
  private:
   BookSide bids_;
   BookSide asks_;
+  std::deque<Fill> recent_fills_;
+  std::size_t recent_capacity_ {512};
+  void push_recent_fill(const Fill& f);
 };
 
 }  

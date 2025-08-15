@@ -13,9 +13,11 @@ OrderResult LimitOrderBook::execute_market(Side side, double size) {
                         ? asks_.consume_best(to_take)
                         : bids_.consume_best(to_take);
     if (take_res.consumed > 0.0) {
+      Fill f{take_res.price, take_res.consumed};
       res.total_filled += take_res.consumed;
       res.notional += take_res.notional;
-      res.fills.push_back(Fill{take_res.price, take_res.consumed});
+      res.fills.push_back(f);
+      push_recent_fill(f);
     }
     remaining -= take_res.consumed;
     if (take_res.consumed <= 0.0) break;
@@ -35,9 +37,11 @@ OrderResult LimitOrderBook::execute_market_steps(Side side, double size, std::si
                         ? asks_.consume_best(to_take)
                         : bids_.consume_best(to_take);
     if (take_res.consumed > 0.0) {
+      Fill f{take_res.price, take_res.consumed};
       res.total_filled += take_res.consumed;
       res.notional += take_res.notional;
-      res.fills.push_back(Fill{take_res.price, take_res.consumed});
+      res.fills.push_back(f);
+      push_recent_fill(f);
     }
     remaining -= take_res.consumed;
     if (take_res.consumed <= 0.0) break;
@@ -61,9 +65,11 @@ OrderResult LimitOrderBook::execute_limit(Side side, double price, double size) 
                         ? asks_.consume_best(to_take)
                         : bids_.consume_best(to_take);
     if (take_res.consumed > 0.0) {
+      Fill f{take_res.price, take_res.consumed};
       res.total_filled += take_res.consumed;
       res.notional += take_res.notional;
-      res.fills.push_back(Fill{take_res.price, take_res.consumed});
+      res.fills.push_back(f);
+      push_recent_fill(f);
     }
     remaining -= take_res.consumed;
     if (take_res.consumed <= 0.0) break;
@@ -86,6 +92,27 @@ void LimitOrderBook::cancel(Side side, double price, double size) {
   } else {
     asks_.remove(price, size);
   }
+}
+
+void LimitOrderBook::set_recent_fills_capacity(std::size_t cap) {
+  recent_capacity_ = cap == 0 ? 1 : cap;
+  while (recent_fills_.size() > recent_capacity_) recent_fills_.pop_front();
+}
+
+std::vector<Fill> LimitOrderBook::get_and_clear_recent_fills() {
+  std::vector<Fill> out;
+  out.reserve(recent_fills_.size());
+  while (!recent_fills_.empty()) {
+    out.push_back(recent_fills_.front());
+    recent_fills_.pop_front();
+  }
+  return out;
+}
+
+void LimitOrderBook::push_recent_fill(const Fill& f) {
+  if (recent_capacity_ == 0) return;
+  if (recent_fills_.size() >= recent_capacity_) recent_fills_.pop_front();
+  recent_fills_.push_back(f);
 }
 
 }  
