@@ -12,5 +12,5 @@ def label_next_direction(df: pd.DataFrame, horizon: int = 5, neutral_eps: float 
     future = df["close"].shift(-horizon)
     ret = (future - df["close"]) / df["close"]
     y = np.where(ret > neutral_eps, 1, np.where(ret < -neutral_eps, -1, 0))
-    return pd.Series(y, index=df.index)
+    return pd.Series(y.flatten(), index=df.index)
 

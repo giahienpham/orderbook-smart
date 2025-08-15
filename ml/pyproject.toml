@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "booksmart-ml"
 version = "0.0.1"
 description = "Orderbook Smart ML: ingest, features, train, backtest"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 dependencies = [
   "numpy>=1.24",
   "pandas>=2.0",
