@@ -69,14 +69,27 @@ class FallbackDirectionModel:
         y_pred = self.predict(X)
         
         acc = accuracy_score(y, y_pred)
-        report = classification_report(y, y_pred, target_names=["down", "flat", "up"], output_dict=True)
-        cm = confusion_matrix(y, y_pred)
         
-        metrics = {
-            "accuracy": acc,
-            "classification_report": report,
-            "confusion_matrix": cm.tolist()
-        }
+        unique_classes = np.unique(y)
+        if len(unique_classes) == 1:
+            # Handle edge case where only one class is present
+            metrics = {
+                "accuracy": acc,
+                "note": f"Only one class present: {unique_classes[0]}",
+                "confusion_matrix": [[len(y)]]
+            }
+        else:
+            class_names = ["down", "flat", "up"]
+            available_names = [class_names[i] for i in unique_classes]
+            
+            report = classification_report(y, y_pred, target_names=available_names, output_dict=True, zero_division=0)
+            cm = confusion_matrix(y, y_pred)
+            
+            metrics = {
+                "accuracy": acc,
+                "classification_report": report,
+                "confusion_matrix": cm.tolist()
+            }
         
         if detailed:
             _, confidence = self.predict_with_confidence(X)

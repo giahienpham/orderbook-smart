@@ -110,40 +110,32 @@ class XGBDirectionModel:
         confidence = np.max(probs, axis=1)
         return predictions, confidence
     
-    def evaluate(self, X: np.ndarray, y: np.ndarray, detailed: bool = False) -> dict:
+    def evaluate(self, X, y, detailed=False):
+        """Evaluate model performance"""
+        if self.model is None:
+            raise ValueError("Model not trained")
+        
         y_pred = self.predict(X)
-        y_proba = self.predict_proba(X)
+        accuracy = accuracy_score(y, y_pred)
         
-        acc = accuracy_score(y, y_pred)
-        report = classification_report(y, y_pred, target_names=["down", "flat", "up"], output_dict=True)
-        
-        cm = confusion_matrix(y, y_pred)
-        
-        metrics = {
-            "accuracy": acc,
-            "classification_report": report,
-            "confusion_matrix": cm.tolist()
-        }
+        result = {"accuracy": accuracy}
         
         if detailed:
-            for i, class_name in enumerate(["down", "flat", "up"]):
-                class_idx = i - 1
-                class_mask = (y == class_idx)
-                if np.sum(class_mask) > 0:
-                    class_acc = accuracy_score(y[class_mask], y_pred[class_mask])
-                    metrics[f"{class_name}_accuracy"] = class_acc
-            
-            _, confidence = self.predict_with_confidence(X)
-            metrics["avg_confidence"] = np.mean(confidence)
-            metrics["min_confidence"] = np.min(confidence)
-            
-            high_conf_mask = confidence > 0.5
-            if np.sum(high_conf_mask) > 0:
-                high_conf_acc = accuracy_score(y[high_conf_mask], y_pred[high_conf_mask])
-                metrics["high_confidence_accuracy"] = high_conf_acc
-                metrics["high_confidence_fraction"] = np.mean(high_conf_mask)
+            unique_classes = np.unique(y)
+            if len(unique_classes) == 1:
+                # Handle edge case where only one class is present
+                result["note"] = f"Only one class present: {unique_classes[0]}"
+                result["precision"] = accuracy
+                result["recall"] = accuracy
+                result["f1"] = accuracy
+            else:
+                class_names = ["down", "flat", "up"]
+                available_names = [class_names[i] for i in unique_classes]
+                
+                report = classification_report(y, y_pred, target_names=available_names, output_dict=True, zero_division=0)
+                result.update(report)
         
-        return metrics
+        return result
     
     def get_feature_importance(self, top_n: int = 20) -> pd.DataFrame:
         if self.feature_importance_ is None:
